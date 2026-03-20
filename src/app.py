@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 import os
+import re
 from pathlib import Path
 
 app = FastAPI(title="Mergington High School API",
@@ -18,6 +19,63 @@ app = FastAPI(title="Mergington High School API",
 current_dir = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
           "static")), name="static")
+
+# Schedule parsing helpers
+
+_DAY_NAMES = {
+    "monday": "Monday", "mondays": "Monday",
+    "tuesday": "Tuesday", "tuesdays": "Tuesday",
+    "wednesday": "Wednesday", "wednesdays": "Wednesday",
+    "thursday": "Thursday", "thursdays": "Thursday",
+    "friday": "Friday", "fridays": "Friday",
+    "saturday": "Saturday", "saturdays": "Saturday",
+    "sunday": "Sunday", "sundays": "Sunday",
+}
+
+
+def _time_to_minutes(time_str: str) -> int:
+    """Convert a time string like '3:30 PM' to minutes since midnight."""
+    match = re.match(r"(\d{1,2}):(\d{2})\s*(AM|PM)", time_str.strip(), re.IGNORECASE)
+    if not match:
+        return 0
+    hours, minutes, period = int(match.group(1)), int(match.group(2)), match.group(3).upper()
+    if period == "PM" and hours != 12:
+        hours += 12
+    elif period == "AM" and hours == 12:
+        hours = 0
+    return hours * 60 + minutes
+
+
+def _parse_schedule(schedule: str) -> list[tuple[str, int, int]]:
+    """Return a list of (day, start_minutes, end_minutes) tuples for a schedule string."""
+    time_match = re.search(
+        r"(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM))$",
+        schedule,
+        re.IGNORECASE,
+    )
+    if not time_match:
+        return []
+    start = _time_to_minutes(time_match.group(1))
+    end = _time_to_minutes(time_match.group(2))
+    if end <= start:
+        return []
+    days_str = schedule[: time_match.start()].rstrip(", ")
+    days = []
+    for word in re.split(r"[\s,]+", days_str):
+        day = _DAY_NAMES.get(word.lower())
+        if day and day not in days:
+            days.append(day)
+    return [(day, start, end) for day in days]
+
+
+def _schedules_overlap(schedule_a: str, schedule_b: str) -> bool:
+    """Return True if two schedule strings share an overlapping day/time slot."""
+    for day_a, start_a, end_a in _parse_schedule(schedule_a):
+        for day_b, start_b, end_b in _parse_schedule(schedule_b):
+            if day_a == day_b and start_a < end_b and start_b < end_a:
+                return True
+    return False
+
 
 # In-memory activity database
 activities = {
@@ -104,6 +162,21 @@ def signup_for_activity(activity_name: str, email: str):
             status_code=400,
             detail="Student is already signed up"
         )
+
+    # Check for schedule conflicts with existing enrollments
+    for enrolled_name, enrolled_activity in activities.items():
+        if enrolled_name == activity_name:
+            continue
+        if email in enrolled_activity["participants"]:
+            if _schedules_overlap(activity["schedule"], enrolled_activity["schedule"]):
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        f"Schedule conflict: '{activity_name}' "
+                        f"({activity['schedule']}) overlaps with "
+                        f"'{enrolled_name}' ({enrolled_activity['schedule']})"
+                    ),
+                )
 
     # Add student
     activity["participants"].append(email)
