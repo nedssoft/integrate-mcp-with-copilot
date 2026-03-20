@@ -87,6 +87,29 @@ section h3 {
   font-size: 16px;
 }
 
+.waitlist-section {
+  margin-top: 12px;
+}
+
+.waitlist-section h5 {
+  margin-bottom: 8px;
+  color: #8a6d3b;
+  font-size: 16px;
+}
+
+.waitlist-section ul {
+  list-style-type: none;
+  padding-left: 5px;
+}
+
+.waitlist-section ul li {
+  padding: 4px 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .participants-section ul {
   list-style-type: none;
   padding-left: 5px;
