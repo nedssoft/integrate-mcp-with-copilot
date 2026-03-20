@@ -130,6 +130,39 @@ section h3 {
   font-style: italic;
 }
 
+/* Waitlist section */
+.waitlist-section {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #f0ad4e;
+}
+
+.waitlist-section h5 {
+  margin-bottom: 8px;
+  color: #856404;
+  font-size: 16px;
+}
+
+.waitlist-section ul {
+  list-style-type: none;
+  padding-left: 5px;
+}
+
+.waitlist-section ul li {
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.waitlist-position {
+  font-weight: bold;
+  color: #856404;
+  min-width: 28px;
+  margin-right: 6px;
+  font-size: 13px;
+}
+
 .form-group {
   margin-bottom: 15px;
 }

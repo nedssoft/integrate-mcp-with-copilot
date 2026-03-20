@@ -21,6 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const spotsLeft =
           details.max_participants - details.participants.length;
 
+        const availabilityText =
+          spotsLeft > 0
+            ? `${spotsLeft} spots left`
+            : details.waitlist && details.waitlist.length > 0
+            ? `Full (${details.waitlist.length} on waitlist)`
+            : "Full";
+
         // Create participants HTML with delete icons instead of bullet points
         const participantsHTML =
           details.participants.length > 0
@@ -37,13 +44,34 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>`
             : `<p><em>No participants yet</em></p>`;
 
+        // Create waitlist HTML
+        const waitlistHTML =
+          details.waitlist && details.waitlist.length > 0
+            ? `<div class="waitlist-section">
+              <h5>Waitlist:</h5>
+              <ul class="participants-list">
+                ${details.waitlist
+                  .map(
+                    (email, index) =>
+                      `<li>
+                        <span class="waitlist-position">#${index + 1}</span>
+                        <span class="participant-email">${email}</span>
+                        <button class="delete-btn" data-activity="${name}" data-email="${email}">❌</button>
+                      </li>`
+                  )
+                  .join("")}
+              </ul>
+            </div>`
+            : "";
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <p><strong>Availability:</strong> ${availabilityText}</p>
           <div class="participants-container">
             ${participantsHTML}
+            ${waitlistHTML}
           </div>
         `;
 
@@ -131,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         messageDiv.textContent = result.message;
-        messageDiv.className = "success";
+        messageDiv.className = result.status === "waitlisted" ? "info" : "success";
         signupForm.reset();
 
         // Refresh activities list to show updated participants
