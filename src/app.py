@@ -130,3 +130,46 @@ def unregister_from_activity(activity_name: str, email: str):
     # Remove student
     activity["participants"].remove(email)
     return {"message": f"Unregistered {email} from {activity_name}"}
+
+
+@app.get("/analytics")
+def get_analytics():
+    """Return activity engagement and capacity metrics for the admin dashboard"""
+    total_enrolled = 0
+    total_capacity = 0
+    activity_metrics = []
+
+    for name, details in activities.items():
+        enrolled = len(details["participants"])
+        capacity = details["max_participants"]
+        spots_left = capacity - enrolled
+        utilization = round((enrolled / capacity) * 100, 1) if capacity > 0 else 0.0
+
+        total_enrolled += enrolled
+        total_capacity += capacity
+
+        activity_metrics.append({
+            "name": name,
+            "description": details["description"],
+            "schedule": details["schedule"],
+            "enrolled": enrolled,
+            "capacity": capacity,
+            "spots_left": spots_left,
+            "utilization": utilization,
+            "waitlist": 0  # No waitlist in current data model; reserved for future use
+        })
+
+    # Sort by enrollment descending for a useful default order
+    activity_metrics.sort(key=lambda x: x["enrolled"], reverse=True)
+
+    overall_utilization = round(
+        (total_enrolled / total_capacity) * 100, 1
+    ) if total_capacity > 0 else 0.0
+
+    return {
+        "total_activities": len(activities),
+        "total_enrolled": total_enrolled,
+        "total_capacity": total_capacity,
+        "overall_utilization": overall_utilization,
+        "activities": activity_metrics
+    }
