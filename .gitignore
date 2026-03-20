@@ -41,3 +41,6 @@ __pycache__
 
 # Env files
 .env
+
+# Attendance data (runtime-generated persistence file)
+src/attendance.json
