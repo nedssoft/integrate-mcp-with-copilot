@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics Dashboard – Mergington High School</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Mergington High School</h1>
+      <h2>Activity Analytics Dashboard</h2>
+    </header>
+
+    <nav class="dashboard-nav">
+      <a href="/static/index.html" class="nav-link">← Back to Activities</a>
+    </nav>
+
+    <main class="dashboard-main">
+
+      <!-- Summary Cards -->
+      <section class="summary-cards" id="summary-cards">
+        <div class="stat-card">
+          <span class="stat-value" id="total-activities">–</span>
+          <span class="stat-label">Total Activities</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="total-enrolled">–</span>
+          <span class="stat-label">Total Enrolled</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="total-capacity">–</span>
+          <span class="stat-label">Total Capacity</span>
+        </div>
+        <div class="stat-card highlight">
+          <span class="stat-value" id="overall-utilization">–</span>
+          <span class="stat-label">Overall Utilization</span>
+        </div>
+      </section>
+
+      <!-- Filters -->
+      <section class="filters-section">
+        <h3>Filters</h3>
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="activity-filter">Activity:</label>
+            <select id="activity-filter">
+              <option value="">All Activities</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="utilization-filter">Utilization:</label>
+            <select id="utilization-filter">
+              <option value="">All</option>
+              <option value="low">Low (&lt; 50%)</option>
+              <option value="medium">Medium (50–80%)</option>
+              <option value="high">High (&gt; 80%)</option>
+              <option value="full">Full (100%)</option>
+            </select>
+          </div>
+          <button id="reset-filters" class="secondary-btn">Reset Filters</button>
+        </div>
+      </section>
+
+      <!-- Capacity Utilization Chart -->
+      <section class="chart-section">
+        <h3>Capacity Utilization by Activity</h3>
+        <div id="chart-container">
+          <p class="loading-text">Loading chart…</p>
+        </div>
+      </section>
+
+      <!-- Metrics Table -->
+      <section class="table-section">
+        <h3>Enrollment Details</h3>
+        <div class="table-wrapper">
+          <table id="metrics-table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Schedule</th>
+                <th>Enrolled</th>
+                <th>Capacity</th>
+                <th>Spots Left</th>
+                <th>Utilization</th>
+                <th>Waitlist</th>
+              </tr>
+            </thead>
+            <tbody id="metrics-tbody">
+              <tr><td colspan="7" class="loading-text">Loading data…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Mergington High School</p>
+    </footer>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>
