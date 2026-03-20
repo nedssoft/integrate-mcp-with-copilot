@@ -77,6 +77,10 @@ activities = {
     }
 }
 
+# Ensure every activity has a waitlist for overflow signups.
+for activity in activities.values():
+    activity.setdefault("waitlist", [])
+
 
 @app.get("/")
 def root():
@@ -105,9 +109,27 @@ def signup_for_activity(activity_name: str, email: str):
             detail="Student is already signed up"
         )
 
+    if email in activity["waitlist"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Student is already on waitlist"
+        )
+
+    # Add student to waitlist when the activity is full.
+    if len(activity["participants"]) >= activity["max_participants"]:
+        activity["waitlist"].append(email)
+        return {
+            "message": f"{activity_name} is full. Added {email} to waitlist.",
+            "status": "waitlisted",
+            "waitlist_position": len(activity["waitlist"])
+        }
+
     # Add student
     activity["participants"].append(email)
-    return {"message": f"Signed up {email} for {activity_name}"}
+    return {
+        "message": f"Signed up {email} for {activity_name}",
+        "status": "enrolled"
+    }
 
 
 @app.delete("/activities/{activity_name}/unregister")
@@ -120,13 +142,28 @@ def unregister_from_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
-    # Validate student is signed up
-    if email not in activity["participants"]:
-        raise HTTPException(
-            status_code=400,
-            detail="Student is not signed up for this activity"
-        )
+    if email in activity["participants"]:
+        activity["participants"].remove(email)
 
-    # Remove student
-    activity["participants"].remove(email)
-    return {"message": f"Unregistered {email} from {activity_name}"}
+        # Promote first waitlisted student to participant.
+        promoted_student = None
+        if activity["waitlist"]:
+            promoted_student = activity["waitlist"].pop(0)
+            activity["participants"].append(promoted_student)
+
+        if promoted_student:
+            return {
+                "message": f"Unregistered {email} from {activity_name}. Promoted {promoted_student} from waitlist.",
+                "promoted_student": promoted_student
+            }
+
+        return {"message": f"Unregistered {email} from {activity_name}"}
+
+    if email in activity["waitlist"]:
+        activity["waitlist"].remove(email)
+        return {"message": f"Removed {email} from the waitlist for {activity_name}"}
+
+    raise HTTPException(
+        status_code=400,
+        detail="Student is neither enrolled nor on the waitlist for this activity"
+    )
