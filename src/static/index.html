@@ -39,6 +39,78 @@
         </form>
         <div id="message" class="hidden"></div>
       </section>
+
+      <section id="attendance-section">
+        <h3>Attendance</h3>
+
+        <div class="tab-bar">
+          <button class="tab-btn active" data-tab="mark-tab">Mark Attendance</button>
+          <button class="tab-btn" data-tab="summary-tab">Activity Summary</button>
+          <button class="tab-btn" data-tab="student-tab">Student History</button>
+        </div>
+
+        <!-- Mark / Edit Attendance (coaches/admin) -->
+        <div id="mark-tab" class="tab-content active">
+          <form id="attendance-form">
+            <div class="form-group">
+              <label for="att-marked-by">Authorized User (coach/admin):</label>
+              <input type="email" id="att-marked-by" placeholder="coach@mergington.edu" required />
+            </div>
+            <div class="form-group">
+              <label for="att-activity">Activity:</label>
+              <select id="att-activity" required>
+                <option value="">-- Select an activity --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="att-email">Student Email:</label>
+              <input type="email" id="att-email" placeholder="student@mergington.edu" required />
+            </div>
+            <div class="form-group">
+              <label for="att-date">Session Date:</label>
+              <input type="date" id="att-date" required />
+            </div>
+            <div class="form-group">
+              <label for="att-status">Status:</label>
+              <select id="att-status" required>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <button type="submit" id="mark-btn">Mark Attendance</button>
+              <button type="button" id="edit-btn">Edit Existing</button>
+            </div>
+          </form>
+          <div id="attendance-message" class="hidden"></div>
+        </div>
+
+        <!-- Activity Attendance Summary -->
+        <div id="summary-tab" class="tab-content hidden">
+          <div class="form-group">
+            <label for="summary-activity">Activity:</label>
+            <select id="summary-activity">
+              <option value="">-- Select an activity --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="summary-date">Filter by Date (optional):</label>
+            <input type="date" id="summary-date" />
+          </div>
+          <button id="load-summary-btn">Load Summary</button>
+          <div id="summary-result"></div>
+        </div>
+
+        <!-- Student Attendance History -->
+        <div id="student-tab" class="tab-content hidden">
+          <div class="form-group">
+            <label for="student-email">Student Email:</label>
+            <input type="email" id="student-email" placeholder="student@mergington.edu" />
+          </div>
+          <button id="load-student-btn">Load History</button>
+          <div id="student-result"></div>
+        </div>
+      </section>
     </main>
 
     <footer>

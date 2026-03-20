@@ -198,3 +198,90 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+/* Attendance section */
+#attendance-section {
+  max-width: 550px;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #1a237e;
+  padding-bottom: 4px;
+}
+
+.tab-btn {
+  background: none;
+  color: #1a237e;
+  border: 1px solid #1a237e;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-btn.active,
+.tab-btn:hover {
+  background-color: #1a237e;
+  color: white;
+}
+
+.tab-content {
+  padding-top: 8px;
+}
+
+.form-row {
+  display: flex;
+  gap: 8px;
+}
+
+.attendance-summary {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #f0f4ff;
+  border: 1px solid #c5cae9;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.attendance-summary h5 {
+  margin-bottom: 6px;
+  color: #1a237e;
+}
+
+.attendance-summary p {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.attendance-table th {
+  background-color: #e8eaf6;
+  color: #1a237e;
+}
+
+.status-present {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.status-absent {
+  color: #c62828;
+  font-weight: bold;
+}
